@@ -1,0 +1,60 @@
+#!/usr/bin/env  bash
+
+set -e
+
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <USER> <PASSWORD>"
+    exit 1
+fi;
+
+ZNC_USER=$1
+ZNC_PASS=$2
+
+if [ ! -d /znc/configs ]; then
+    mkdir -p /znc/configs
+fi;
+
+ZNC_SALT="$(dd if=/dev/urandom bs=16c count=1 | md5sum | awk '{print $1}')"
+ZNC_HASH="sha256#$(echo -n ${ZNC_PASS}${ZNC_SALT} | sha256sum | awk '{print $1'})#${ZNC_SALT}#"
+
+
+if [ ! -e /znc/configs/znc.conf ]; then
+
+cat<<EOF > /znc/configs/znc.conf
+Version     = 1.0
+SSLCertFile = /znc/znc.pem
+
+<Listener listener0>
+    Host        = 0.0.0.0
+    Port        = 7000
+    IPv4        = true
+    IPv6        = false
+    SSL         = true
+    AllowIRC    = true
+    AllowWeb    = true
+</Listener>
+
+LoadModule = webadmin
+LoadModule = lastseen
+
+<User $ZNC_USER>
+    Pass                = $ZNC_HASH
+
+    Admin               = true
+    Nick                = $ZNC_USER
+    AltNick             = _$ZNC_USER
+    Ident               = $ZNC_USER
+
+    Buffer              = 100
+    AutoClearChanBuffer = false
+
+    ChanModes           = +stn
+
+    LoadModule          = autoattach
+    LoadModule          = chansaver
+</User>
+EOF
+
+fi;
+
+exec /usr/bin/znc -f -r -d /znc

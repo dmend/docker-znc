@@ -1,0 +1,10 @@
+# for OSX files
+.DS_Store
+
+# for git files
+.git/
+.gitignore
+
+# for maintenance files
+deploy.sh
+
