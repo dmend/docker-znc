@@ -10,17 +10,20 @@ fi;
 ZNC_USER=$1
 ZNC_PASS=$2
 
-if [ ! -d /znc/configs ]; then
-    mkdir -p /znc/configs
+ZNC_ROOT="/znc/state"
+
+
+if [ ! -d ${ZNC_ROOT}/configs ]; then
+    mkdir -p ${ZNC_ROOT}/configs
 fi;
 
 ZNC_SALT="$(dd if=/dev/urandom bs=16c count=1 | md5sum | awk '{print $1}')"
 ZNC_HASH="sha256#$(echo -n ${ZNC_PASS}${ZNC_SALT} | sha256sum | awk '{print $1'})#${ZNC_SALT}#"
 
 
-if [ ! -e /znc/configs/znc.conf ]; then
+if [ ! -e ${ZNC_ROOT}/configs/znc.conf ]; then
 
-cat<<EOF > /znc/configs/znc.conf
+cat<<EOF > ${ZNC_ROOT}/configs/znc.conf
 Version     = 1.0
 SSLCertFile = /znc/znc.pem
 
@@ -57,4 +60,4 @@ EOF
 
 fi;
 
-exec /usr/bin/znc -f -r -d /znc
+exec /usr/bin/znc -f -r -d /znc/state
