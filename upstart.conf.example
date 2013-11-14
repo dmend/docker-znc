@@ -1,0 +1,8 @@
+description "ZNC IRC Bouncer (with SSL)"
+author      "Naoki OKAMURA (Nyarla) <nyarla@thotep.net>"
+
+start on filesystem and started lxc-net and started docker
+stop  on runlevel [!2345]
+respawn
+
+exec docker run -link lingr:lingr -p 0.0.0.0:7000:7000 -v /home/core/state/znc:/znc/state nyarla/znc:latest <USER> <PASS>
