@@ -2,3 +2,4 @@
 znc.pem
 
 upstart.conf
+state/
