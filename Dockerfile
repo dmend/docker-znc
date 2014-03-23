@@ -1,8 +1,14 @@
 # Dockerfile for znc
-# 
-# Version: 0.01
+# Version: 0.02
+
 FROM        ubuntu:12.04
-MAINTAINER  Naoki OKAMURA (Nyarlra) <nyarla@thotep.net>
+MAINTAINER  Naoki OKAMURA (Nyarla) <nyarla@thotep.net>
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get upgrade -y
 
 RUN echo "deb http://archive.ubuntu.com/ubuntu quantal-backports main restricted universe multiverse" >> /etc/apt/sources.list
 RUN echo "deb-src http://archive.ubuntu.com/ubuntu quantal-backports main restricted universe multiverse" >> /etc/apt/sources.list
@@ -19,6 +25,7 @@ RUN adduser --group znc
 RUN useradd -g znc znc
 RUN chown -R znc:znc /znc
 
+EXPOSE 7000
 USER znc
 ENTRYPOINT ["/znc/run"]
 
