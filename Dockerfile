@@ -1,22 +1,21 @@
 # Dockerfile for znc
-# Version: 0.02
+# Version: 0.03
 
-FROM        ubuntu:12.04
-MAINTAINER  Naoki OKAMURA (Nyarla) <nyarla@thotep.net>
+FROM        ubuntu:14.04
+MAINTAINER  Douglas Mendizábal (redrobot) <mail@doug.gt>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe"            > /etc/apt/sources.list
-RUN echo "deb http://security.ubuntu.com/ubuntu precise-security main universe" >> /etc/apt/sources.list
+RUN echo "America/Chicago" > /etc/timezone
+RUN dpkg-reconfigure tzdata
+
+RUN echo "deb http://archive.ubuntu.com/ubuntu trusty main universe"            > /etc/apt/sources.list
+RUN echo "deb http://security.ubuntu.com/ubuntu trusty-security main universe" >> /etc/apt/sources.list
 
 RUN apt-get update
 RUN apt-get upgrade -y
 
-RUN echo "deb http://archive.ubuntu.com/ubuntu quantal-backports main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb-src http://archive.ubuntu.com/ubuntu quantal-backports main restricted universe multiverse" >> /etc/apt/sources.list
-RUN apt-get update
-
-RUN apt-get install znc/quantal-backports znc-dbg/quantal-backports znc-dev/quantal-backports znc-extra/quantal-backports znc-perl/quantal-backports znc-python/quantal-backports znc-tcl/quantal-backports -y
+RUN apt-get install znc -y
 
 RUN mkdir -p /znc
 ADD run     /znc/run
